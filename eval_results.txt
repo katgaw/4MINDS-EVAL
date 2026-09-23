@@ -1,0 +1,237 @@
+4MINDS document evaluation
+Model: model-czech-insurance (id 3117)
+Document: /Users/katerinag/4MINDS/data/va-124-soubor-vozidla.pdf
+Decision accuracy: 6/10 (60%)
+Mean lexical F1: 0.19
+
+Ground-truth answers were scored locally and were not sent to the model.
+
+========================================================================
+[1/10] FAIL  decision=no  match=False  f1=0.0258
+
+Question:
+Auto v hodnotě 600 000 Kč je havarijně pojištěno jen na 300 000 Kč (podpojištění 50 %), spoluúčast 10 %/min. 10 000 Kč. Při jedné události dojde současně k rozbití čelního skla i k poškození karoserie nárazem do patníku. Ovlivní podpojištění z havarijního pojištění výši plnění za rozbité sklo?
+
+4minds:
+**Yes, the 50 % sub‑insurance (podpojištění) reduces the payable amount for a broken front windshield when the same accident also causes body damage.**  
+
+Because the comprehensive (havarijní) policy covers glass damage, the insurer treats the windshield repair as part of the overall vehicle‑damage claim and does not involve the separate glass‑insurance clause. The claim is settled in the following order (as stipulated in the policy):
+
+1. **Determine the total loss** (glass + body damage).  
+2. **Deduct the deductible** – 10 % of the loss, but not less than 10 000 CZK.  
+3. **Apply the sub‑insurance reduction** – the remaining amount is reduced by the under‑insurance factor (here 50 %).  
+
+Thus the payable amount equals:
+
+\[
+\text{Payable} = \bigl(\text{Total loss} - \max(0.10 \times \text{Total loss},\;10 000 \text{CZK})\bigr) \times 0.50
+\]
+
+For illustration, the policy example uses a total loss of 100 000 CZK: after a 10 000 CZK deductible the net loss is 90 000 CZK, and the 50 % sub‑insurance cuts this to 45 000 CZK. The same calculation applies to any loss that includes a front‑windshield break together with body damage.
+
+Ground truth:
+Ne. Str. 20 (Pojištění skel) výslovně říká: „Může dojít i k situaci, kdy dojde k současnému poškození skla i jiné části vozidla. Pokud je přitom k vozidlu sjednáno havarijní pojištění, ze kterého vznikne právo na pojistné plnění, zaplatíme Vám škodu z havarijního pojištění. Pojištění skel do toho vůbec nebude zatahováno.“ Sklo se tedy řeší zcela samostatně a podpojištění z havarijní části (viz příklad na str. 6: 90 000 Kč sníženo na 45 000 Kč kvůli 50% podpojištění) se do plnění za sklo vůbec nepromítne.
+
+========================================================================
+[2/10] PASS  decision=no  match=True  f1=0.2222
+
+Question:
+Řidič havaruje pod vlivem alkoholu a vozidlo se v důsledku toho stane nepojízdným (ne kvůli chybějící výbavě ani agresivní jízdě). Poskytne pojišťovna asistenční služby?
+
+4minds:
+**Pojišťovna asistenční služby v takovém případě neposkytne.**  
+
+Podle podmínek pojištění asistence jsou vyloučeny situace, kdy nepojízdnost vozidla vznikne:
+
+- **nedostatečnou povinnou výbavou** nebo  
+- **agresivní jízdou**  
+
+a dále je výslovně uvedeno, že asistenci neposkytneme, pokud bylo vozidlo **provozováno v rozporu s právními předpisy**. Řízení pod vlivem alkoholu je porušením zákona o silniční dopravě, a proto spadá pod tuto kategorii. Navíc v oddíle o nařízeném odtahu je uvedeno, že pokud policie nebo jiný orgán nařídí odtah kvůli tomu, že řidič byl **nezpůsobilý k řízení (např. opilý)**, náklady za takový odtah pojišťovna nehradí.
+
+Proto, i když nepojízdnost není způsobena chybějící výbavou ani agresivní jízdou, **řízení pod vlivem alkoholu představuje vyloučený případ a pojišťovna asistenci nefinancuje**.
+
+Ground truth:
+Ne. Kapitola Asistence sama (str. 9) vylučuje jen nedostatečnou výbavu a agresivní jízdu. Jenže obecná ustanovení platná pro všechna pojištění kromě povinného ručení (str. 52, bod 15.2.b) říkají, že plnění neposkytneme, pokud řídil oprávněný řidič pod vlivem alkoholu – a tato obecná výluka se na asistenci vztahuje, protože v seznamu výjimek u kapitoly 12 (str. 51) se týká jiné skupiny výluk (chybějící řidičské oprávnění), ne alkoholu. Asistence proto poskytnuta nebude.
+
+========================================================================
+[3/10] FAIL  decision=yes  match=False  f1=0.0672
+
+Question:
+Klient má vedle havarijního pojištění sjednané i pojištění GAP. Při totálním poškození vozidla mu havarijní pojištění vyplatí obvyklou cenu sníženou o spoluúčast. Může se spoluúčast proplatit i z GAP pojištění, a za jaké podmínky?
+
+4minds:
+**Spoluúčast z havarijního pojištění není hraditelná z pojištění GAP.**  
+
+GAP‑pojištění se vztahuje výhradně na rozdíl mezi pořizovací cenou vozidla a jeho obvyklou (nebo účetní) hodnotou v okamžiku pojistné události. Při výpočtu pojistného plnění z GAP se tato částka neodečítá o spoluúčast, která je součástí havarijního pojištění.  
+
+**Podmínky, za kterých GAP poskytuje plnění při totálním poškození:**  
+
+- **Typ události:** nastane totální poškození vozidla nebo jeho odcizení.  
+- **Věk vozidla:**  
+  - nové vozidlo (registrace do provozu ≤ 90 dní, vyrobené továrně, zakoupené v ČR od autorizovaného prodejce a první vlastník v techničáku), nebo  
+  - ojeté vozidlo, pokud je pořizovací cena doložena (např. fakturou) a případně stanovena podle ceníku TAXexpert či obdobného.  
+- **Dokumentace:** pojištěný musí předložit kopii dokladu o koupi nebo jiný uznávaný doklad o pořizovací ceně.  
+- **Ukončení pojištění:** GAP zaniká okamžikem totálního poškození, odcizení nebo při změně způsobu užívání či druhu vozidla.  
+
+Proto lze z GAP získat pouze částku, která pokrývá „mezera“ mezi skutečnou tržní hodnotou vozidla a jeho pořizovací cenou; spoluúčast z havarijního pojištění zůstává na straně pojistníka.
+
+Ground truth:
+Ano, ale jen pokud je to výslovně sjednáno ve smlouvě. Str. 22 (GAP, bod 3): „Když se tak ve smlouvě domluvíme, zahrneme do výše škody i spoluúčast odečtenou z havarijního pojištění.“ Bez tohoto ujednání GAP spoluúčast nekryje.
+
+========================================================================
+[4/10] FAIL  decision=split  match=False  f1=0.1682
+
+Question:
+Během vichřice o síle 25 m/s spadne strom přesně ve chvíli, kdy pod ním projíždí vozidlo. Druhý den jiné auto najede na týž strom, který od noci leží přes silnici po stejné vichřici. Jsou obě škody kryté ze živelního pojištění?
+
+4minds:
+**Ano, oba popsané případy jsou kryty živelním pojištěním.**  
+
+Živelní pojištění se vztahuje na škody na vozidle způsobené přírodními živly, mezi které patří i vichřice a související události, jako je pád stromu. Podmínky výslovně uvádějí, že pojištění „pomůže, když vozidlo přímo nebo vržením předmětu na vozidlo poškodí nebo zničí následující přírodní živly“ – tedy i situaci, kdy během vichřice strom dopadne na jedoucí automobil.  
+
+**1. Dopad stromu během vichřice (25 m/s) na projíždějící vozidlo**  
+Tato událost představuje přímé poškození vozidla v důsledku přírodního jevu (vichřice). Podle podmínek je taková škoda zahrnuta do pojistného plnění, pokud nastane během pojistného období a na území České republiky a není vyloučena jiným výlučným ustanovením (např. pokud by pojištěný mohl škodu předejít umístěním vozidla mimo rizikové území).  
+
+**2. Následné sražení vozidla do stromu, který po vichřici zůstává na silnici**  
+I když k poškození dochází při kolizi s již ležícím stromem, příčina této situace je stále vichřice, která strom na silnici přinesla. Pojištění tedy považuje i tuto následnou škodu za důsledek přírodního živlu a poskytuje krytí za stejných podmínek jako v první situaci.  
+
+**Podmínky pro uplatnění**  
+- Událost se musí stát během platnosti pojistky a na území České republiky.  
+- Škoda nesmí být vyloučena výslovnými výlukami (např. pokud by pojištěný mohl škodu předejít nepřiměřeným umístěním vozidla).  
+- Pojištěný je povinen oznámit pojistnou událost pojišťovně a doložit potřebné důkazy (např. policejní protokol, fotografie).  
+
+Za předpokladu splnění těchto podmínek je pojistné plnění z živelního pojištění poskytováno jak za přímý dopad padajícího stromu, tak za následnou kolizi s tímto stromem.
+
+Ground truth:
+První škoda ano, druhá ne. Str. 23 (Živelní pojištění): „Pokud ale řádí vichřice během jízdy a sfoukne strom nebo jinou překážku před vozidlo nebo na něj, pak škodu z pojištění uhradíme“ – to platí pro první auto. Naopak: „Z pojištění nehradíme škody, které nastaly, protože vozidlo vjelo (…) do jiných předmětů spadlých v důsledku předchozího řádění živlů“ – druhé auto tedy kryto není, protože strom spadl už dříve a auto do něj jen najelo.
+
+========================================================================
+[5/10] PASS  decision=no  match=True  f1=0.2979
+
+Question:
+Pojistná částka pro tělesné poškození a trvalé následky úrazu činí 200 000 Kč. Při nehodě vzniknou pojištěnému popáleniny na noze (3 %) a na paži (5 %) – tedy na dvou různých částech těla. Sečtou se procenta, jako to podmínky normálně velí u poškození více částí těla?
+
+4minds:
+**Procenta poškození se sčítají, ale ne u popálenin**  
+
+- Obecně platí, že pokud úraz postihne více částí těla, pojistitel **sečte procentuální hodnocení** jednotlivých poškození a výsledek použije k výpočtu pojistného plnění, přičemž celková částka nesmí překročit pojistnou částku sjednanou ve smlouvě.  
+- Výjimkou jsou specifické typy úrazů, u nichž se procenta **nesčítají**. Patří sem : chirurgicky ošetřené rány, plošné abrazy, **popáleniny**, poleptání, omrzliny, cizí tělíska a pohmoždění (včetně mnohočetných pohmoždění na různých částech těla).  
+
+**Důsledek pro Váš příklad**  
+- Popálenina na noze (3 %) + popálenina na paži (5 %) → procenta **nebudou sečtena**. Pojišťovna posoudí každou popáleninu samostatně a výplatu stanoví podle příslušného procenta, avšak součet těchto částek se nepřičítá.  
+- Pokud by šlo o jiné typy poškození (např. zlomeniny), procenta by se sčítala až do výše pojistné částky.
+
+Takže při úrazech, které zahrnují popáleniny, se procenta **nesčítají**; pro ostatní tělesná poškození se sčítají podle výše uvedených podmínek.
+
+Ground truth:
+Ne, nesečtou se. Ačkoli obecné pravidlo (str. 18, bod b) říká, že se procenta poškození různých částí těla sčítají, existuje výjimka („ALE!“, str. 18): u chirurgicky ošetřených ran, plošných abrazí, popálenin, poleptání, omrzlin, cizích tělísek a pohmoždění se „vzhledem ke stejnému charakteru poškození jednotlivá procentní ohodnocení nescítají“ – a to i mezi různými částmi těla. Počítá se tedy jen vyšší procento (5 %), plnění = 5 % z 200 000 Kč = 10 000 Kč, nikoli 8 % (16 000 Kč).
+
+========================================================================
+[6/10] PASS  decision=other  match=True  f1=0.1254
+
+Question:
+Řidič pod vlivem alkoholu havaruje a poškodí cizí vozidlo i své vlastní (havarijně pojištěné). Jak se bude lišit vyřízení škody na cizím voze (z povinného ručení) od vyřízení škody na vlastním voze?
+
+4minds:
+**Rozdíl v vyřízení škody na cizím vozidle (povinné ručení) a na vlastním vozidle (havarijní pojištění), pokud řidič byl pod vlivem alkoholu**
+
+Při nehodě, kde řidič řídil pod vlivem alkoholu, se uplatňují v obou druzích pojištění stejné obecné výluky – pojištění může být odmítnuto nebo sníženo. Přesto existují rozdíly v tom, kdo je poškozený, jaký je průběh vyplácení a jakým způsobem pojišťovna může požadovat vrácení již vyplacených částek.
+
+| **Aspekt** | **Povinné ručení (škoda na cizím vozidle)** | **Havarijní pojištění (škoda na vlastním vozidle)** |
+|------------|--------------------------------------------|----------------------------------------------------|
+| **Předmět pojištění** | Odpovědnost pojištěného za újmu způsobenou třetí osobě (majetek, zdraví, život). | Poškození, zničení nebo odcizení pojištěného vozidla. |
+| **Příjemce pojistného plnění** | Poškozený (vlastník nebo uživatel cizího vozidla). | Pojištěný – vlastník nebo oprávněná osoba vozidla. |
+| **Vliv intoxikace řidiče** | Intoxikace je výlučná podmínka – pojišťovna může odmítnout plnění nebo jej po vyplacení požadovat zpět. | Intoxikace je také výlučná podmínka – pojišťovna může odmítnout plnění nebo snížit částku; případně může po vyplacení požadovat vrácení. |
+| **Možnost subrogace / vrácení částky** | Pojišťovna má právo vrátit vyplacenou částku pojištěnému, pokud zjistí, že řidič byl pod vlivem alkoholu (článek 5 – odškodnění a následné vymáhání). | Stejně tak pojišťovna může požadovat vrácení částky, pokud řidič porušil podmínku (intoxikace) a pojištění bylo poskytnuto. |
+| **Postup při uplatnění nároku** | 1. Oznámení škody pojišťovateli.<br>2. Vyplnění a předložení záznamu o dopravní nehodě.<br>3. Pojišťovna prověří, zda řidič byl pod vlivem alkoholu.<br>4. Pokud ne, vyplatí odškodnění poškozenému; pokud ano, může odmítnout nebo později požadovat vrácení. | 1. Oznámení škody pojišťovateli.<br>2. Předložení dokumentace (fotografie, opravy, policejní protokol).<br>3. Pojišťovna ověří, zda řidič byl pod vlivem alkoholu.<br>4. Pokud ne, určí výši škody a vyplatí pojištěnému; pokud ano, může odmítnout plnění nebo jej snížit a následně požadovat vrácení. |
+| **Důsledky pro pojištěného** | Možnost ztráty pojistného plnění a povinnosti nahradit částku pojišťovně; může dojít k navýšení spoluúčasti nebo ke ztrátě pojistného krytí při opakovaných porušeních. | Stejné riziko ztráty plnění a povinnosti vrátit částku; může být uplatněna vyšší spoluúčast nebo omezení budoucího krytí. |
+
+**Shrnutí**
+
+- **Povinné ručení** vyplácí odškodnění třetí osobě, ale pokud řidič řídil pod vlivem alkoholu, pojišťovna může odmítnout plnění nebo po vyplacení požadovat jeho vrácení.
+- **Havarijní pojištění** hradí škodu na vlastním vozidle, avšak intoxikace řidiče je také výlučná podmínka – pojišťovna může odmítnout nebo snížit plnění a následně požadovat vrácení vyplacené částky.
+- V obou případech je klíčové okamžité oznámení škody a poskytnutí potřebných důkazů (např. policejní protokol). Intoxikace řidiče vede k riziku ztráty pojistného krytí a povinnosti nahradit pojišťovně vyplacené částky.
+
+Ground truth:
+Cizímu poškozenému se škoda z povinného ručení uhradí vždy – ale pojišťovna má následně právo (regres) požadovat vyplacenou částku zpět po pojištěném/řidiči, protože řídil pod vlivem alkoholu (str. 5, bod 6.1.c). Naproti tomu na vlastním voze z havarijního pojištění se plnění vůbec neposkytne (str. 52, bod 15.2.b) – tam jde o přímé odepření plnění, ne o zpětné vymáhání.
+
+========================================================================
+[7/10] PASS  decision=no  match=True  f1=0.2791
+
+Question:
+Zloději vykradou uzamčené auto a odcizí spolujezdcův notebook, který vezl jako osobní věc. Auto má sjednané jak pojištění zavazadel, nosičů a boxů, tak pojištění dopravovaných věcí. Kryje škodu některé z nich?
+
+4minds:
+**Pojištění zavazadel, nosičů a boxů ani pojištění dopravovaných věcí běžně nehradí krádež notebooku spolujezdce z uzamčeného auta.**  
+
+- V podmínkách pojištění dopravovaných věcí je výslovně uvedeno, že se pojištění **nevztahuje na odcizení elektroniky (mobily, notebooky atd.)**.  
+- U pojištění zavazadel, nosičů a boxů lze v rámci smlouvy sjednat krytí i krádeže, avšak výluky zahrnují také **elektronické zařízení** a platí podmínka, že věc musí být řádně zabezpečena (zamčená v autě nebo pod uzamčenou plachtou).  
+- Navíc pojištění neplatí, pokud k odcizení dojde v čase **22:00 – 6:00 hod**, ledaže je vozidlo zaparkováno v objektu střeženém fyzickou ostrahou nebo v uzamčené garáži.  
+
+Proto, pokud notebook nebyl výslovně zahrnut do pojistné smlouvy a nebyl řádně zabezpečen, pojištění pravděpodobně krytí neposkytne. Pro konkrétní situaci je nutné zkontrolovat, zda byla v pojistné smlouvě sjednána výjimka pro elektroniku a zda byly splněny podmínky zabezpečení a časové omezení.
+
+Ground truth:
+Ne, škoda není kryta z žádného z nich. Notebook je osobní věcí, tedy „zavazadlem“, ale pojištění zavazadel, nosičů a boxů výslovně vylučuje odcizení „elektroniky (mobily, notebooky atd.)“ (str. 38). Pojištění dopravovaných věcí zase samo výslovně vylučuje ze svého rozsahu „zavazadla a věci osobní potřeby“ (str. 28). Notebook tak propadne mezerou mezi oběma pojištěními.
+
+========================================================================
+[8/10] PASS  decision=yes  match=True  f1=0.2985
+
+Question:
+Řidič bez platného řidičského oprávnění narazí do výmolu na běžné (neúčelové) komunikaci, která nebyla varovně značená. Uplatní se výluka za chybějící řidičské oprávnění i u pojištění VÝMOL?
+
+4minds:
+**Výluka za chybějící řidičské oprávnění se u pojištění výmolu neuplatňuje.**  
+
+V obecné části pojistných podmínek je uvedeno, že pojištění neposkytne plnění, pokud škodu způsobí osoba, která nemá řidičské oprávnění (bod 3). Tato výluka však patří mezi výluky označené písmeny a) – c). U pojištění výmolu jsou výluky a) – c) výslovně vyloučeny („Výluky podle písmene a) – c) neuplatníme u těchto pojištění: … výmol“).  
+
+Proto, pokud řidič bez platného řidičského oprávnění narazí do výmolu na neoznačené běžné komunikaci, pojištění výmolu plnění poskytne, pokud jsou splněny další podmínky výluky specifické pro výmol:
+
+- škoda nastala na běžné (neúčelové) komunikaci,  
+- na místě nebylo dopravní značení upozorňující na zhoršený stav vozovky nebo výmol,  
+- řidič neměl předchozí informace, že by výmol mohl být na daném úseku.
+
+Za předpokladu, že výše uvedené podmínky jsou splněny, pojišťovna povinnost vyplatit pojistné plnění neodkládá kvůli chybějícímu řidičskému oprávnění.
+
+Ground truth:
+Ano, výluka se neuplatní a škoda kryta bude. Obecná ustanovení (str. 51) uvádějí: „Výluky podle písmene a) – c) neuplatníme u těchto pojištění: asistence, nezaviněná nehoda, výmol, zavazadla, nosiče a boxy, právní pomoc“ – a písmeno a) je právě chybějící řidičské oprávnění (str. 50, bod 3.a). U pojištění VÝMOL tedy chybějící řidičák plnění nezhatí (pokud navíc nejde o účelovou komunikaci ani značený/předem známý výmol – str. 34).
+
+========================================================================
+[9/10] PASS  decision=yes  match=True  f1=0.3667
+
+Question:
+Vozidlo je po srážce (řešené z havarijního pojištění) prohlášeno za totálně poškozené. Majitel má navíc sjednané živelní pojištění, pojištění TOTÁLKA a GAP. Zaniknou tato doplňková pojištění automaticky, i když samotná srážka s jejich rizikem nesouvisela?
+
+4minds:
+**Ano – po totálním poškození vozidla všechna doplňková pojištění (živelní pojištění, pojištění TOTÁLKA a GAP) automaticky zanikají, a to i když příčina nehody nesouvisí s riziky těchto pojištění.**  
+
+- **Živelní pojištění** – v obecných ustanoveních je uvedeno, že pojištění končí, jakmile nastane pojistná událost spočívající v totálním poškození vozidla.  
+- **Pojištění TOTÁLKA** – podmínky uvádějí, že pojištění zaniká při totální škodě vozidla, a to bez ohledu na to, zda škodu způsobila přírodní živl nebo jiný faktor.  
+- **GAP pojištění** – rovněž je specifikováno, že pojištění končí, když dojde k totálnímu poškození nebo odcizení vozidla; příčina nehody není podmínkou pro ukončení.  
+
+Tedy jakýkoli případ totálního poškození, ať už vznikl havarijní událostí, kolizí nebo jiným nepojištěným rizikem, vede k automatickému ukončení uvedených doplňkových pojištění.
+
+Ground truth:
+Ano, zaniknou všechna současně, bez ohledu na to, která konkrétní pojistka totální škodu řešila. Živelní pojištění (str. 24, bod 7), Pojištění TOTÁLKA (str. 33, bod 7) i GAP (jehož vlastní pojistná událost je definovaná jako totální poškození nebo odcizení, str. 21–22) shodně zanikají dnem, kdy nastane totální poškození vozidla jako objektivně definovaný stav (viz Výklad pojmů, str. 56) – nezávisle na tom, že ke škodě došlo v rámci havarijního pojištění.
+
+========================================================================
+[10/10] FAIL  decision=yes  match=False  f1=0.0112
+
+Question:
+Klient chce řešit spor o vadné vozidlo (závazkové právo) s obchodním partnerem se sídlem v Rusku prostřednictvím pojištění právní pomoci. Kromě zjevného geografického vyloučení Ruska – existuje ještě jiný, obecnější důvod z podmínek, proč by plnění nemuselo být poskytnuto?
+
+4minds:
+**Yes, the policy contains a general exclusion that would also deny coverage.**  
+
+For contract‑law (závazkové právo) disputes, the insurer explicitly states that it does **not** provide legal assistance when the dispute is adjudicated by a foreign court or other foreign authority. The relevant clause reads that if a contract‑law dispute is resolved abroad, the insurance “will not help.” Because a defect‑vehicle dispute with a Russian business partner would inevitably be handled by a Russian (foreign) court, this provision alone is sufficient to refuse legal‑assistance coverage, even without the specific geographic exclusion of Russia.
+
+In addition, the policy limits legal assistance for contract‑law matters to events that occur on Czech territory. If the alleged defect or the breach of contractual obligations happened outside the Czech Republic, the coverage would likewise be excluded.
+
+Other general exclusions (e.g., disputes between persons covered by the same policy, defending rights transferred to you, or defending rights on behalf of a third party) are listed, but they are not directly applicable to a client‑versus‑Russian‑partner dispute. The decisive provisions are therefore:
+
+- **Foreign‑court exclusion for contract‑law disputes**  
+- **Territorial requirement that the breach occur in the Czech Republic**  
+
+Both would result in denial of legal‑assistance coverage for the described situation.
+
+Ground truth:
+Ano – obecná ustanovení (str. 49, bod 9 „Kdy nemůžeme splnit svůj slib“) stanoví, že pojistitel neposkytne plnění ani služby, pokud by to znamenalo porušení mezinárodních sankcí či embarg vyhlášených OSN, EU, ČR, Spojeným královstvím (případně USA, pokud si neprotiřečí). Vzhledem k rozsáhlým sankcím vůči Rusku by tak plnění mohlo být odepřeno i nezávisle na geografickém vyloučení uvedeném přímo u právní pomoci (str. 41).
